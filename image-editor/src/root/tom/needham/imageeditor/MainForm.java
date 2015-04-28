@@ -35,21 +35,22 @@ import java.io.IOException;
  */
 
 public class MainForm extends JFrame {
-    private JPanel rootPanel;
-    private JMenuBar menuStrip;
-    private JMenu fileMenu;
-    private JMenuItem openImageItem;
-    private JMenuItem closeImageItem;
-    private JMenuItem saveImageItem;
-    private JMenuItem saveAsItem;
-    private JMenuItem exitItem;
-    private JMenu aboutMenu;
-    private JMenuItem aboutThisPluginItem;
-    private JMenu editMenu;
-    private JMenuItem resizeItem;
-    private JLabel imagePane;
-    private ImageEditor editor;
-    private String openfile;
+    public JPanel rootPanel;
+    public JMenuBar menuStrip;
+    public JMenu fileMenu;
+    public JMenuItem openImageItem;
+    public JMenuItem closeImageItem;
+    public JMenuItem saveImageItem;
+    public JMenuItem saveAsItem;
+    public JMenuItem exitItem;
+    public JMenu aboutMenu;
+    public JMenuItem aboutThisPluginItem;
+    public JMenu editMenu;
+    public JMenuItem resizeItem;
+    public JMenuItem androidItem;
+    public JLabel imagePane;
+    public ImageEditor editor;
+    public String openfile;
 
     public MainForm(ImageEditor editor) {
         this.editor = editor;
@@ -77,6 +78,7 @@ public class MainForm extends JFrame {
         aboutMenu = new JMenu();
         editMenu = new JMenu();
         resizeItem = new JMenuItem();
+        androidItem = new JMenuItem();
         aboutThisPluginItem = new JMenuItem();
         imagePane = new JLabel();
 
@@ -150,6 +152,16 @@ public class MainForm extends JFrame {
                         }
                     });
                     editMenu.add(resizeItem);
+
+                    //---- androidItem ----
+                    androidItem.setText("Resize Image for Android");
+                    androidItem.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            AndroidResize();
+                        }
+                    });
+                    editMenu.add(androidItem);
                 }
                 menuStrip.add(editMenu);
                 //======== aboutMenu ========
@@ -189,6 +201,11 @@ public class MainForm extends JFrame {
         }
         add(rootPanel, BorderLayout.CENTER);
         this.pack();
+    }
+
+    private void AndroidResize() {
+        AndroidFileResizer afr = new AndroidFileResizer(this);
+        afr.resizeImage();
     }
 
     private void ResizeImage() {
