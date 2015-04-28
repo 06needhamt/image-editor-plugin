@@ -1,3 +1,5 @@
+package root.tom.needham.imageeditor;
+
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
 

@@ -1,12 +1,11 @@
 <idea-plugin version="2">
-  <id>com.yourcompany.unique.plugin.id</id>
-  <name>Plugin display name here</name>
+  <id>root.tom.needham.imageeditor</id>
+  <name>Lightweight Image Editor</name>
   <version>1.0</version>
-  <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+  <vendor email="06needhamt@gmail.com" url="http://www.github.com/06needhamt/image-editor-plugin">Thomas Needham</vendor>
 
   <description><![CDATA[
-      Enter short description for your plugin here.<br>
-      <em>most HTML tags may be used</em>
+      plugin that allows a developer to quickly resize image files within their projects (more features to come)
     ]]></description>
 
   <change-notes><![CDATA[
@@ -20,9 +19,7 @@
 
   <!-- please see https://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
        on how to target different products -->
-  <!-- uncomment to enable plugin in all products
   <depends>com.intellij.modules.lang</depends>
-  -->
 
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
@@ -38,11 +35,11 @@
 
   <actions>
     <!-- Add your actions here -->
-    <action id="Edit Image File " class="ImageEditor" text="Image Editor"
+    <action id="Edit Image File " class="root.tom.needham.imageeditor.ImageEditor" text="Image Editor"
             description="A lightweight and easy to use image editor plugin for Intellij">
       <add-to-group group-id="FileOpenGroup" anchor="last"/>
     </action>
-    <action id="EditImage" class="ImageEditor" text="Lightweight Image Editor" description="image editor plugin">
+    <action id="EditImage" class="root.tom.needham.imageeditor.ImageEditor" text="Lightweight Image Editor" description="image editor plugin">
       <add-to-group group-id="ToolsMenu" anchor="first"/>
     </action>
   </actions>

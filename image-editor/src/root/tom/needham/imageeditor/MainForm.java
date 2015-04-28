@@ -1,12 +1,11 @@
-import com.google.common.io.ByteStreams;
-import com.intellij.openapi.fileEditor.FileEditorManager;
+package root.tom.needham.imageeditor;
+
 import com.intellij.openapi.project.Project;
-import com.intellij.util.io.IOUtil;
-import org.apache.sanselan.util.IOUtils;
+import root.tom.needham.imageeditor.ImageEditor;
+import root.tom.needham.imageeditor.ImageFileFilter;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -15,19 +14,15 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.filechooser.FileFilter;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
