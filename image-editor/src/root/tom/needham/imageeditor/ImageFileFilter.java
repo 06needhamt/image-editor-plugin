@@ -1,3 +1,8 @@
+/*
+ * Lightweight Image Editor Plugin For Intellij 14
+ * Copyright (c) 2015 Thomas Needham
+ */
+
 package root.tom.needham.imageeditor;
 
 import javax.swing.filechooser.FileFilter;

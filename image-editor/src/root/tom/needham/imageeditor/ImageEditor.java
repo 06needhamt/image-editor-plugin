@@ -1,3 +1,8 @@
+/*
+ * Lightweight Image Editor Plugin For Intellij 14
+ * Copyright (c) 2015 Thomas Needham
+ */
+
 package root.tom.needham.imageeditor;
 
 import com.intellij.icons.AllIcons;
@@ -29,25 +34,34 @@ public class ImageEditor extends AnAction {
         int x = (int) ((t.getScreenSize().getWidth() - (double) f.getWidth()) / 2.0D);
         int y = (int) ((t.getScreenSize().getHeight() - (double) f.getHeight()) / 2.0D);
         f.setLocation(x, y);
-        //checkIfImageIsOpen(e);
+        checkIfImageIsOpen(event);
         f.setVisible(true);
     }
 
-//    private void checkIfImageIsOpen(AnActionEvent event) {
-//        final Project project = event.getProject();
-//        if(project == null){
-//            return;
-//        }
-//        VirtualFile[] files = FileEditorManager.getInstance(project).getOpenFiles();
-//        for(VirtualFile file : files){
-//            String filename = file.getName().substring(file.getName().length() - 3,file.getName().length());
-//            System.out.println(filename);
-//            if(filename.equals("jpg") || filename.equals("png")){
-//                try {
-//                    byte[] bytes = file.contentsToByteArray();
-//                    f.openImage(bytes);
-//                    return;
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
+    private void checkIfImageIsOpen(AnActionEvent event) {
+        final Project project = event.getProject();
+        if (project == null) {
+            return;
+        }
+        try {
+            VirtualFile[] files = FileEditorManager.getInstance(project).getOpenFiles();
+            for (VirtualFile file : files) {
+                f.openfile = file.getName();
+                String filetype = file.getName().substring(file.getName().length() - 3, file.getName().length());
+                System.out.println(filetype);
+                if (filetype.equals("jpg") || filetype.equals("png")) {
+                    try {
+                        byte[] bytes = file.contentsToByteArray();
+                        f.openImage(bytes);
+                        return;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        catch (NullPointerException e){
+            e.printStackTrace();
+        }
+    }
 }

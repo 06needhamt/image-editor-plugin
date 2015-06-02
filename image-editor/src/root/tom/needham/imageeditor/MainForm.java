@@ -1,3 +1,8 @@
+/*
+ * Lightweight Image Editor Plugin For Intellij 14
+ * Copyright (c) 2015 Thomas Needham
+ */
+
 package root.tom.needham.imageeditor;
 
 import com.intellij.openapi.project.Project;
@@ -5,6 +10,7 @@ import root.tom.needham.imageeditor.ImageEditor;
 import root.tom.needham.imageeditor.ImageFileFilter;
 
 import javax.imageio.ImageIO;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -22,7 +28,10 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -50,6 +59,8 @@ public class MainForm extends JFrame {
     public JMenuItem androidItem;
     public JLabel imagePane;
     public ImageEditor editor;
+    public JMenuItem convertItem;
+    public JMenuItem rotateItem;
     public String openfile;
 
     public MainForm(ImageEditor editor) {
@@ -60,11 +71,6 @@ public class MainForm extends JFrame {
 
     private void initComponents() {
         createUI();
-        addEventListeners();
-    }
-
-    private void addEventListeners() {
-
     }
 
     private void createUI() {
@@ -81,6 +87,8 @@ public class MainForm extends JFrame {
         androidItem = new JMenuItem();
         aboutThisPluginItem = new JMenuItem();
         imagePane = new JLabel();
+        convertItem = new JMenuItem();
+        rotateItem = new JMenuItem();
 
         //======== this ========
         setLayout(new BorderLayout());
@@ -135,6 +143,8 @@ public class MainForm extends JFrame {
                         }
                     });
                     fileMenu.add(exitItem);
+
+
                 }
                 menuStrip.add(fileMenu);
 
@@ -162,6 +172,35 @@ public class MainForm extends JFrame {
                         }
                     });
                     editMenu.add(androidItem);
+
+                    //---- convertItem ----
+                    convertItem.setText("Convert Image");
+                    convertItem.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            final String[] FILE_FORMATS = new String[]{".png", ".jpg"};
+                            final String format = (String) JOptionPane.showInputDialog(null, "Select a format",
+                                    "Select a format", JOptionPane.QUESTION_MESSAGE, new ImageIcon(), FILE_FORMATS, FILE_FORMATS[0]);
+                            ConvertImage(format);
+                        }
+                    });
+                    editMenu.add(convertItem);
+                    rotateItem.setText("Rotate Image");
+                    rotateItem.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            final double degrees = Double.parseDouble(JOptionPane.showInputDialog(null,"Enter Degrees to rotate"));
+                            try {
+                                ImageIcon icon = new ImageIcon(rotateImage(degrees));
+                                imagePane.setIcon(icon);
+                            }
+                            catch (NullPointerException ex){
+                                openfile = "";
+                                ex.printStackTrace();
+                            }
+                        }
+                    });
+                    editMenu.add(rotateItem);
                 }
                 menuStrip.add(editMenu);
                 //======== aboutMenu ========
@@ -197,10 +236,36 @@ public class MainForm extends JFrame {
                 preferredSize.height += insets.bottom;
                 rootPanel.setMinimumSize(preferredSize);
                 rootPanel.setPreferredSize(preferredSize);
+
             }
         }
         add(rootPanel, BorderLayout.CENTER);
         this.pack();
+    }
+
+    private void ConvertImage(String format) {
+        ImageIcon icon = null;
+        BufferedImage bi = null;
+        Graphics g = null;
+        if(imagePane.getIcon() == null){
+            return;
+        }
+        icon = (ImageIcon) imagePane.getIcon();
+        if(format.equals(".jpg")) {
+            bi = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_RGB);
+            g = bi.createGraphics();
+        }
+        else if(format.equals(".png")){
+            bi = new BufferedImage(icon.getIconWidth(),icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+            g = bi.createGraphics();
+        }
+        if (bi != null) {
+            Image image = bi.getScaledInstance(bi.getWidth(),bi.getHeight(),Image.SCALE_DEFAULT);
+            SaveFile(new File(openfile));
+        }
+        else{
+            return;
+        }
     }
 
     private void AndroidResize() {
@@ -242,6 +307,9 @@ public class MainForm extends JFrame {
 
     private void SaveBeforeClose(boolean exiting) {
         if(imagePane.getIcon() == null){
+            if(exiting){
+                this.dispose();
+            }
             return;
         }
         int result = JOptionPane.showConfirmDialog(this,"Do you want to save your changes?","Save Changes",JOptionPane.YES_NO_CANCEL_OPTION);
@@ -328,6 +396,32 @@ public class MainForm extends JFrame {
         imagePane.setIcon(new ImageIcon(bytes));
         this.repaint();
         return true;
+    }
+
+    public BufferedImage rotateImage(double degrees){
+        try {
+            String filetype = openfile.substring(openfile.length() - 3, openfile.length());
+            int imagetype = 0;
+            if (filetype.equals("jpg"))
+                imagetype = BufferedImage.TYPE_INT_RGB;
+            else if (filetype.equals("png"))
+                imagetype = BufferedImage.TYPE_INT_ARGB;
+            else {JOptionPane.showMessageDialog(this,"Unsupported file type"); return null;}
+            BufferedImage image = new BufferedImage(imagePane.getWidth(), imagePane.getHeight(), imagetype);
+            double rotation = Math.toRadians(degrees);
+            double locX = imagePane.getWidth() / 2;
+            double locY = imagePane.getHeight() / 2;
+            AffineTransform transform = new AffineTransform();
+            transform.rotate(rotation,locX,locY);
+            AffineTransformOp transformOp = new AffineTransformOp(transform, AffineTransformOp.TYPE_BILINEAR);
+            BufferedImage dest = new BufferedImage(imagePane.getWidth(), imagePane.getHeight(), imagetype);
+            return transformOp.filter(image,dest);
+        }
+        catch (NullPointerException ex){
+            ex.printStackTrace();
+            JOptionPane.showConfirmDialog(this,"No image open", "Error",JOptionPane.DEFAULT_OPTION);
+            return null;
+        }
     }
 
 }

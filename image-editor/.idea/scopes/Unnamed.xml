@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Unnamed" pattern="src:root.tom.needham.imageeditor.*" />
+</component>
